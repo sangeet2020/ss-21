@@ -1,9 +1,0 @@
-_T=20210419_09:18:21_5731	 ll
-_T=20210419_09:18:58_5731	 git add MT ML SNLP
-_T=20210419_09:19:48_5731	 vim README.md
-_T=20210419_09:19:51_5731	 xdg-open .
-_T=20210419_09:23:24_5731	 git add README.md
-_T=20210419_09:23:32_5731	 git commit -m "first commit"
-_T=20210419_09:23:40_5731	 git push
-_T=20210419_09:24:27_5731	 git add MT ML SNLP
-_T=20210419_09:24:40_5731	 git commit -m "adding respective dirs"
