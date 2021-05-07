@@ -28,6 +28,17 @@ def tokenize(text):
     return tokens_list
 
 def get_conditional_freq(tokens, ngrams_list, n, N):
+    """Compute frequncy of the conditioned words
+
+    Args:
+        tokens (list): list of all tokens from the corpus
+        ngrams_list (list): ngrams list
+        n ([type]): unigram/bigram/trigram
+        N ([type]): vocabulary size
+
+    Returns:
+        [type]: [description]
+    """
     tokens = tokens[:N]
     cond_freq = collections.defaultdict(int)
     for ngram in ngrams_list:
@@ -92,7 +103,6 @@ def find_ngram_probs(tokens, model='unigram') -> dict:
             cond = ' '.join(ngram.split()[:n-1])
             ngram_prob[ngram] = freq / cond_freq[cond]
     
-    # import pdb; pdb.set_trace()
     return ngram_prob, ngram_freq
 
 
@@ -105,14 +115,16 @@ def plot_most_frequent(ngrams, ngram_freq) -> None:
     You may modify the remaining function signature as per your requirements
     """
     
-    sorted_dict = {k: v for k, v in sorted(ngram_freq.items(), key=lambda item: item[1], reverse=True)}
+    ngram_freq_sorted = {k: v for k, v in sorted(ngram_freq.items(), key=lambda item: item[1], reverse=True)}
+    
+    new_ngram = collections.OrderedDict()
+    for ngram, freq in ngram_freq_sorted.items():
+        new_ngram[ngram] = ngrams[ngram]
             
     # import pdb; pdb.set_trace()
-    sorted_dict = {k: v for k, v in sorted(new_ngram.items(), key=lambda item: item[1], reverse=True)}
-    
     #  Pick-out the most frequent top 20 ngrams
-    ngrams = list(sorted_dict.keys())[:50]
-    probs = list(sorted_dict.values())[:50]
+    ngrams = list(new_ngram.keys())[:50]
+    probs = list(new_ngram.values())[:50]
 
     _, ax = plt.subplots()
     ax.bar(ngrams, probs)
@@ -120,31 +132,3 @@ def plot_most_frequent(ngrams, ngram_freq) -> None:
     ax.set_ylabel("probablities")
     plt.xticks(rotation=60, ha='right')   
     plt.show()
-    
-##################################
-
-
-file = open("data/orient_express.txt", "r")
-# file = open("test.txt", "r")
-text = file.read()
-
-# Preprocess text
-tokens = preprocess(text)
-
-# Find conditional probabilities of unigrams, bigrams, trigrams
-"""
-Modify your function call based on how you have defined find_ngram_probs 
-in exercise_2.py
-"""
-# unigrams = exercise_2.find_ngram_probs(tokens, model='unigram')
-bigrams, bigram_freq = find_ngram_probs(tokens, model='bigram')
-# trigrams = find_ngram_probs(tokens, model='trigram')
-
-# Plot most frequent ngrams
-"""
-Modify the function signature as per your definition of plot_most_frequent 
-in exercise_2.py
-"""
-# plot_most_frequent(unigrams)
-plot_most_frequent(bigrams, bigram_freq)
-# plot_most_frequent(trigrams)
