@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn
 import matplotlib as mpl
 seaborn.set()
-mpl.rcParams['figure.dpi'] = 100
+mpl.rcParams['figure.dpi'] = 120
 plt.rcParams["figure.figsize"] = (20,5)
 
 
@@ -23,7 +23,6 @@ def tokenize(text):
     # if use of regex is allowed
     # file_content = re.sub(r'[^a-zA-Z0-9\s]', ' ', file_content)
     
-    # tokens_list =  text.replace('”',' ” ').replace('“',' “ ').replace('’',' ’ ').replace('–',' – ').split()
     tokens_list =  text.replace('”',' ').replace('“',' ').replace('’',' ').replace('–',' ').split()
     return tokens_list
 
@@ -37,7 +36,7 @@ def get_conditional_freq(tokens, ngrams_list, n, N):
         N ([type]): vocabulary size
 
     Returns:
-        [type]: [description]
+        [list]: list of frequnecy of conditioned words
     """
     tokens = tokens[:N]
     cond_freq = collections.defaultdict(int)
@@ -57,7 +56,8 @@ def preprocess(text) -> list:
     : return: A list of tokens
     """
     file_content = text.lower()
-    # Strip punctuations. Reference: https://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string
+    # Strip punctuations. 
+    # Reference: https://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string
     file_content = file_content.translate(
         str.maketrans('', '', string.punctuation))
     
@@ -103,10 +103,10 @@ def find_ngram_probs(tokens, model='unigram') -> dict:
             cond = ' '.join(ngram.split()[:n-1])
             ngram_prob[ngram] = freq / cond_freq[cond]
     
-    return ngram_prob, ngram_freq
+    return ngram_prob
 
 
-def plot_most_frequent(ngrams, ngram_freq) -> None:
+def plot_most_frequent(ngrams, most_frequent=None) -> None:
     # TODO Exercise 2.2
     """
     : param ngrams: The n-grams and their probabilities
@@ -114,17 +114,16 @@ def plot_most_frequent(ngrams, ngram_freq) -> None:
 
     You may modify the remaining function signature as per your requirements
     """
+    ngrams_sorted = {k: v for k, v in sorted(ngrams.items(), key=lambda item: item[1], reverse=True)}
     
-    ngram_freq_sorted = {k: v for k, v in sorted(ngram_freq.items(), key=lambda item: item[1], reverse=True)}
-    
-    new_ngram = collections.OrderedDict()
-    for ngram, freq in ngram_freq_sorted.items():
-        new_ngram[ngram] = ngrams[ngram]
-            
-    # import pdb; pdb.set_trace()
+    # get ngram size
+    n = len(list(ngrams_sorted.keys())[0].split())
+    if most_frequent != None:
+        ngrams_sorted = {ngram: prob for ngram, prob in ngrams_sorted.items() if most_frequent == ' '.join(ngram.split()[:n-1])}
+                
     #  Pick-out the most frequent top 20 ngrams
-    ngrams = list(new_ngram.keys())[:50]
-    probs = list(new_ngram.values())[:50]
+    ngrams = list(ngrams_sorted.keys())[:20]
+    probs = list(ngrams_sorted.values())[:20]
 
     _, ax = plt.subplots()
     ax.bar(ngrams, probs)
@@ -132,3 +131,5 @@ def plot_most_frequent(ngrams, ngram_freq) -> None:
     ax.set_ylabel("probablities")
     plt.xticks(rotation=60, ha='right')   
     plt.show()
+    
+    return ngrams[0]
