@@ -34,8 +34,8 @@ def get_k_mers(genome_red_loc: Path, k: int) -> List[str]:
     """
     # Read
     sequence = SeqIO.parse(genome_red_loc, 'fasta')
-    sequence = list(sequence)
-    # sequence = list(sequence)[:3]
+    # sequence = list(sequence)
+    sequence = list(sequence)[:10]
     # Combine
     text = ''
     for s in sequence:
