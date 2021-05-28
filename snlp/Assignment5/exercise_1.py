@@ -5,6 +5,7 @@ import random
 import math
 import matplotlib.pyplot as plt
 
+
 def preprocess(text) -> List:
     file_content = text.lower()
     # Strip punctuations. 
