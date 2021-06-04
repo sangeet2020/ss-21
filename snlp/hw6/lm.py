@@ -1,11 +1,8 @@
 import pdb
 import numpy as np
 import collections
-from copy import deepcopy
 from typing import List
 from collections import Counter
-
-from numpy.lib.financial import ppmt
 
 
 class LanguageModel:
@@ -67,18 +64,6 @@ class LanguageModel:
         return history_counts
     
     def compute_V(self):
-        # N = 2
-        # train_ngrams = self.get_ngrams(self.train_tokens, N)
-        # test_ngrams = self.get_ngrams(self.test_tokens, N)
-        
-        # train_ngram_counts = Counter(train_ngrams)
-        # test_ngram_counts = Counter(test_ngrams)
-        
-        # for k,v in test_ngram_counts.items():
-        #     if k not in train_ngram_counts:
-        #         train_ngram_counts[k] = 0
-        # # pdb.set_trace()   
-        # return train_ngram_counts
         N = 3
         ngram_counts = []
         for n in range(1, N+1):
@@ -94,12 +79,7 @@ class LanguageModel:
         if self.N != 1:
             history_counts = self.history_counts(self.train_tokens)
         ngram_counts = self.get_ngrams_counts()
-        
         V = len(self.compute_V())
-        # if self.N == 1:
-        # V = len(ngram_counts)
-        # else:
-        # v_prev = self.history_counts(self.test_tokens)
         
         p_w = collections.defaultdict(float)
         for ngram in ngrams:
@@ -122,36 +102,3 @@ class LanguageModel:
             rel_freq[token] = counts / len(ngrams)
         # pdb.set_trace()
         return rel_freq
-            
-            
-
-# from importlib import reload
-# import os
-# import exercise_2
-# import exercise_1
-
-# exercise_1 = reload(exercise_1)
-# exercise_2 = reload(exercise_2)
-
-
-# corpora = {} # To save the respective corpora
-# # TODO: Add a loop over each file
-# for filename in os.listdir('data/'):
-#     with open(os.path.join('data/', filename)) as f:
-#         text = f.read()
-#         pp = exercise_1.preprocess(text) #TODO: preprocess text
-#         train, test = exercise_1.train_test_split_data(pp, test_size=0.3) #TODO: split data
-#         #TODO: Add respective splits to the corpora dict
-#         lang = filename.split('.')[1]
-#         corpora[lang] = (train, test)
-
-# N = 3
-# PPs = {}
-# for lang, (train, test) in corpora.items():
-#     pp_list = []
-#     for i in range(1,N+1):
-#         LM = LanguageModel(train, test, N=i, alpha=1)
-#         pp_list.append(LM.perplexity())
-#     PPs[lang] = pp_list
-# # pdb.set_trace()
-# exercise_2.plot_pp(PPs)

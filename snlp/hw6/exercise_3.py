@@ -1,7 +1,5 @@
-from typing import List
-from random import randrange
-from random import sample
 import pdb
+from typing import List
 import matplotlib.pyplot as plt
 
 def train_test_split_data(text: List[str], test_size=0.2):
@@ -18,16 +16,13 @@ def k_validation_folds(text: List[str], k_folds=5):
     :param text: input corpus
     :param k_folds: number of cross-validation folds
     :return: the cross-validation folds
-    """     
-    chunk = len(text) / float(k_folds)
-    results = []
-    i = 0.0
-
-    while i < len(text):
-        results.append(text[int(i):int(i + chunk)])
-        i += chunk
-
-    return results
+    """ 
+    k_len = int(len(text)/k_folds)
+    cv_folds = list()
+    for i in range(k_folds):
+        cv_folds.append(text[i*k_len:(i+1)*k_len])
+    
+    return cv_folds
 
 def plot_pp_vs_alpha(pps: List[float], alphas: List[float]):
     """ Plots n-gram perplexity vs alpha
@@ -38,5 +33,22 @@ def plot_pp_vs_alpha(pps: List[float], alphas: List[float]):
     plt.xlabel('Alpha values')
     plt.ylabel('Perplexity')
     plt.title("Alpha vs Perplexity")
-
     plt.show()
+
+def plot_PPS_vs_alpha(pps: dict(), alphas: List[float]):
+    """ Plots n-gram perplexity vs alpha
+    :param pps: dict of perplexity scores for ngrams
+    :param alphas: list of alphas
+    """
+    for n, pp in pps.items():
+        if n == 1:
+            plt.plot(alphas, pp, label='unigram')
+        elif n == 2:
+            plt.plot(alphas, pp, label='bigram')
+        
+    plt.xlabel('Alpha values')
+    plt.ylabel('Perplexity')
+    plt.title("Alpha vs Perplexity")
+    plt.legend()
+    plt.show()
+    
