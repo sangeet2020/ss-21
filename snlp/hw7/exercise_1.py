@@ -36,11 +36,6 @@ class CountTree():
         
     def dfs(self, node, prefix):
         """Depth-first traversal of the trie
-        
-        Args:
-            - node: the node to start with
-            - prefix: the current prefix, for tracing a
-                word while traversing the trie
         """
         # pdb.set_trace()
         if node.is_end:
