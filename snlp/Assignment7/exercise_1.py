@@ -26,7 +26,9 @@ class CountTree():
 			if sub_ngram[-2] not in subtree[sub_ngram[-1]]: # new branch
 				new_subtree = self.recur_add({}, sub_ngram[:-1])
 				# subtree['cnt'] = subtree[sub_ngram[-1]]['cnt'] + new_subtree['cnt'] # summing count
+				cnt = subtree[sub_ngram[-1]]['cnt'] + new_subtree['cnt'] # summing count
 				subtree[sub_ngram[-1]] = {**subtree[sub_ngram[-1]], **new_subtree}	# branching out
+				subtree['cnt'] = cnt 
 			else:
 				# continue traversing in tree
 				subtree[sub_ngram[-1]] = self.recur_add(subtree[sub_ngram[-1]], sub_ngram[:-1])
@@ -37,6 +39,7 @@ class CountTree():
 			if len(sub_ngram) == 1: # at leaf node
 				subtree[sub_ngram] = None # leaf node
 				subtree['cnt'] = 1 # add new count
+				# subtree[sub_ngram] = 1
 				return subtree
 			
 			# recursively adding new nodes
