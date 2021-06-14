@@ -2,8 +2,8 @@ from collections import Counter
 from pathlib import Path
 import nltk
 from nltk import RegexpTokenizer
-# nltk.download('reuters')
-# nltk.download('stopwords')
+nltk.download('reuters')
+nltk.download('stopwords')
 from nltk.corpus import reuters, stopwords
 
 import numpy as np
@@ -140,20 +140,3 @@ class Corpus:
         freq_dict = Counter(categories)
         freq_dict = dict(sorted(freq_dict.items(), key=operator.itemgetter(1), reverse=True))
         return freq_dict
-
-
-from nltk.corpus import reuters, stopwords
-stop_words = stopwords.words('english')
-
-corpus = Corpus(
-    documents=[Document(fileid, reuters.raw(fileid), reuters.categories(fileid), stop_words=stop_words) for fileid in reuters.fileids()],
-    categories=reuters.categories()
-)
-
-most_common_housing = corpus.term_frequencies('housing').most_common(10)
-most_common_housing = [term for term, _ in most_common_housing]
-
-dfs_housing = [corpus.df(term, category='housing') for term in most_common_housing]
-dfs_all = [corpus.df(term) for term in most_common_housing]
-
-pmis = corpus.pmi('housing', most_common_housing)
