@@ -20,8 +20,7 @@ plt.rcParams["figure.figsize"] = (20,5)
 import pdb
 
 def plot_category_frequencies(category_frequencies: Counter):
-    
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     frq_list = list(category_frequencies.values())
     cat_list = list(category_frequencies.keys())
     cat_pos = np.arange(len(cat_list))
@@ -34,26 +33,20 @@ def plot_category_frequencies(category_frequencies: Counter):
 
 
 def plot_pmis(category: str, most_common: List[str], pmis: List[float]):
-    fig, ax = plt.subplots()
-    # pos = np.arange(len(most_common))
+    _, ax = plt.subplots()
     ax.bar(most_common, pmis)
     ax.set_title("PMI for the category: " + category)
-    ax.set_xlabel("most common wor  ds")
+    ax.set_xlabel("most common words")
     ax.set_ylabel("PMI")
-    # plt.xticks(rotation=60, ha='right')
-    # plt.xticks(pos, most_common)
     plt.grid()
 
 
 def plot_dfs(terms: List[str], dfs: List[int]):
-    fig, ax = plt.subplots()
-    # pos = np.arange(len(terms))
+    _, ax = plt.subplots()
     ax.bar(terms, dfs)
     ax.set_title("Document frequency of top 10 words")
     ax.set_xlabel("words")
     ax.set_ylabel("DF")
-    # plt.xticks(rotation=60, ha='right')
-    # plt.xticks(pos, terms)
     plt.grid()
 
 
@@ -85,21 +78,24 @@ class Corpus:
         else one of the reuters.categories
         """
         
-        freq_dict = self.category_frequencies()
+        freq_dict_cats = self.category_frequencies()
+        if category:
+            # Get all docs of Ck category with term ti in it.
+            Ck_docs_ti = [1 for document in self.documents if document.category==category if term in document.tokens]
+        else:
+            Ck_docs_ti = [1 for document in self.documents if term in document.tokens]
         
         if category:
-            counter = self.term_frequencies(category)
-            df = dict(counter)[term] / freq_dict[category]
+            df = len(Ck_docs_ti) / freq_dict_cats[category]
         else:
-            counter = self.term_frequencies()
-            df = dict(counter)[term] / sum(freq_dict.values())
-        
+            df = len(Ck_docs_ti) / sum(freq_dict_cats.values())
         return df
+    
     
     def pmi(self, category: str, terms: List[str]) -> float:
         all_tokens_freq = self.term_frequencies()
-        tokens = list(all_tokens_freq.keys())
-        N = sum(all_tokens_freq.values())     # vocab size of housing
+        # tokens = list(all_tokens_freq.keys())
+        N = sum(all_tokens_freq.values())
         categories = self.categories
 
         freq_dict = dict.fromkeys(categories)
@@ -107,7 +103,8 @@ class Corpus:
             counter = self.term_frequencies(cat)
             freq_dict[cat] = counter
         
-        pmis = []        
+        pmis = []      
+        # Reference: https://youtu.be/swDoFpuHpzQ?t=628  
         for term in terms:
             P_w_c =  freq_dict[category][term]/ N
             counts = 0
@@ -118,6 +115,7 @@ class Corpus:
             pmi = math.log2(P_w_c / (P_w * P_c))
             pmis.append(pmi)
         return pmis
+
 
     def term_frequencies(self, category=None) -> Counter:
         if category:
